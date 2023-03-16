@@ -1,5 +1,3 @@
-import string
-
 DICT_OF_NUMERALS = {'I': 1, 'V': 5, 'X': 10, 'L': 50, 'C': 100, 'D': 500, 'M': 1000}
 
 
@@ -57,15 +55,20 @@ def check_roman(num):
     count = 1
     for i in range(len(num) - 1):
         j = i + 1
+        k = None
+        if i > 0:
+            k = i - 1
+        if dic[num[i]] < dic[num[j]]:  # subtraction checks
+            if k is not None and num[j] == num[k] and num[j] in ['V', 'L', 'D']:  # case VIV
+                return False
+            if not dic[num[j]] // dic[num[i]] in [5, 10] or count > 1 or (len(num[i:]) > 2 and dic[num[j+1]] in [dic[num[i]], 5*dic[num[i]], 10*dic[num[i]]]):
+                return False
         if num[i] == num[j]:
             if num[i] in ['V', 'L', 'D'] or count == 3:  # addition checks
                 return False
             count += 1
         else:
             count = 1
-        if dic[num[i]] < dic[num[j]]:  # subtraction checks
-            if not dic[num[j]] // dic[num[i]] in [5, 10] or (len(num[i:]) > 2 and dic[num[j+1]] in [dic[num[i]], 5*dic[num[i]], 10*dic[num[i]]]):
-                return False
     return True
 
 
@@ -86,6 +89,8 @@ def main():
     while True:
         print('Enter a decimal integer or a Roman Numeral (Type \"exit\", \"q\", or \"quit\" to exit)')
         number = input('>>')
+        if not number:
+            continue
         if number in ['exit', 'q', 'quit']:
             break
         if is_int(number) and check_int(int(number)):
